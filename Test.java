@@ -1,9 +1,13 @@
 package uk.gov.moj.cpp.outcomes.domain.event;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * Created by saurabhkumar on 13/08/2016.
@@ -62,11 +66,47 @@ public class Test {
             "\t\t]\n" +
             "}");
 
-    public static void main(String ... s)
-    {
+    private static ThreadLocal<String> valueExtracted = new ThreadLocal<>();
+
+
+
+    public static void main(String... s) {
         List<String> ignoreList = new ArrayList<String>();
+        HearingEventAdded hearingEventAdded = new HearingEventAdded();
+        Wrapper tt = new Wrapper();
+        //tt.setTest("ss");
+        //hearingEventAdded.setTest(tt);
+        Wrapper tt1 = new Wrapper();
+        System.out.println("tt1" + tt1.getTest());
+        tt.setTest(null);
+        hearingEventAdded.setTest(tt);
+        extractValue(()->hearingEventAdded.getTest().getTest()).ifPresent(s1 -> tt1.setTest(s1));
+
+
+
+        ///optionalTypeDirName.ifPresent(typeDirName -> System.out.println(typeDirName));
+
+        // boolean check = Objects.requireNonNull(hearingEventAdded.getTest(),"");
+
         //ignoreList.add("batter");
-        boolean succuss = JSONUtils.areJSONEqual(jsonObject1,jsonObject2,ignoreList);
-        System.out.println(succuss);
+        //boolean succuss = JSONUtils.areJSONEqual(jsonObject1,jsonObject2,ignoreList);
+        System.out.println("tt1" + tt1.getTest());
     }
+
+    public static <T> Optional<T> extractValue(Supplier<T> resolver ){
+        try {
+            T result = resolver.get();
+            return Optional.ofNullable(result);
+        } catch (NullPointerException e) {
+            return Optional.empty();
+        }
+    }
+
+    static <T> void getValue(Optional<T> value)
+    {
+        if(value.isPresent())
+            value.get();
+
+    }
+
 }
